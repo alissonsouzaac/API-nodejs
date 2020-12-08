@@ -1,8 +1,11 @@
 const express = require('express');
+const cors = require('cors');
 const mongoose = require('mongoose');
+const requireDir = require('require-dir');
 
 const app = express();
-
+app.use(express.json());
+app.use(cors());
 
 mongoose
   .connect('mongodb://localhost:27017/Nodejs', {
@@ -19,11 +22,10 @@ mongoose
     console.log(error);
   });
 
-  require('./src/models/Product');
+  requireDir('./src/models');
 
+  const Product = mongoose.model('Product')
 
-app.get('/', (req, res) => {
-    res.send('Primeira pag');
-})
+  app.use("/api", require("./src/Routes"));
 
-app.listen(3002);
+app.listen(3002, () => console.log('Server aberto na porta 3002'));
